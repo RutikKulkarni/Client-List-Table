@@ -9,7 +9,13 @@ export interface Client {
   updatedBy: string;
 }
 
-export type SortField = "name" | "createdAt" | "updatedAt" | "id";
+export type SortField =
+  | "name"
+  | "createdAt"
+  | "updatedAt"
+  | "id"
+  | "email"
+  | "type";
 
 export interface SortCriteria {
   field: SortField;
