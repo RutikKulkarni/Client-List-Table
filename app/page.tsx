@@ -88,7 +88,7 @@ const mockClients: Client[] = [
 ];
 
 export default function ClientsPage() {
-  const [clients, setClients] = useState<Client[]>(mockClients);
+  const [clients] = useState<Client[]>(mockClients);
   const [activeTab, setActiveTab] = useState<"all" | "individual" | "company">(
     "all"
   );
@@ -98,9 +98,7 @@ export default function ClientsPage() {
     "all" | "active" | "inactive"
   >("all");
 
-  // Filter clients based on active tab, search query, and status
   const filteredClients = clients.filter((client) => {
-    // Tab filter
     const tabMatch =
       activeTab === "all" || client.type.toLowerCase() === activeTab;
 

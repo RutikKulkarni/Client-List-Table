@@ -1,7 +1,5 @@
 "use client";
-
 import type React from "react";
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -13,6 +11,7 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
+  type DragEndEvent,
 } from "@dnd-kit/core";
 import {
   arrayMove,
@@ -121,7 +120,7 @@ const sortOptions: SortOption[] = [
 export function SortPanel({
   sortCriteria,
   onSortCriteriaChange,
-  onClose,
+  onClose: _onClose,
 }: SortPanelProps) {
   const [tempCriteria, setTempCriteria] =
     useState<SortCriteria[]>(sortCriteria);
@@ -137,7 +136,7 @@ export function SortPanel({
     const filteredCriteria = tempCriteria.filter((c) => c.field !== field);
     const newCriteria: SortCriteria[] = [
       ...filteredCriteria,
-      { field, direction: direction as "asc" | "desc" },
+      { field, direction },
     ];
     setTempCriteria(newCriteria);
     onSortCriteriaChange(newCriteria);
@@ -152,20 +151,23 @@ export function SortPanel({
   const toggleDirection = (field: SortField) => {
     const newCriteria = tempCriteria.map((c) =>
       c.field === field
-        ? { ...c, direction: c.direction === "asc" ? "desc" : "asc" }
+        ? {
+            ...c,
+            direction: (c.direction === "asc" ? "desc" : "asc") as
+              | "asc"
+              | "desc",
+          }
         : c
     );
     setTempCriteria(newCriteria);
     onSortCriteriaChange(newCriteria);
   };
 
-  const handleDragEnd = (event: any) => {
+  const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
-
-    if (active.id !== over.id) {
+    if (active.id !== over?.id) {
       const oldIndex = tempCriteria.findIndex((c) => c.field === active.id);
-      const newIndex = tempCriteria.findIndex((c) => c.field === over.id);
-
+      const newIndex = tempCriteria.findIndex((c) => c.field === over?.id);
       const newCriteria = arrayMove(tempCriteria, oldIndex, newIndex);
       setTempCriteria(newCriteria);
       onSortCriteriaChange(newCriteria);
@@ -201,12 +203,10 @@ export function SortPanel({
             </Button>
           )}
         </div>
-
         <div className="space-y-3">
           {sortOptions.map((option) => {
             const activeCriteria = isFieldActive(option.field);
             const activeDirection = getFieldDirection(option.field);
-
             return (
               <div key={option.field} className="space-y-2">
                 <div className="flex items-center gap-3">
@@ -217,7 +217,6 @@ export function SortPanel({
                   {option.options.map((subOption) => {
                     const isActive =
                       activeCriteria && activeDirection === subOption.direction;
-
                     return (
                       <button
                         key={`${option.field}-${subOption.direction}`}
@@ -243,7 +242,6 @@ export function SortPanel({
             );
           })}
         </div>
-
         {tempCriteria.length > 0 && (
           <div className="space-y-2 border-t pt-4">
             <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wide">
@@ -261,7 +259,9 @@ export function SortPanel({
                 {tempCriteria.map((criteria, index) => {
                   const option = sortOptions.find(
                     (o) => o.field === criteria.field
-                  )!;
+                  );
+                  if (!option) return null;
+
                   return (
                     <SortableItem
                       key={criteria.field}
