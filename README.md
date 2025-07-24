@@ -3,6 +3,8 @@
 A modern, interactive client management table with advanced multi-sort functionality and drag-and-drop prioritization.
 
 
+- **Live URL**: https://client-list-table.vercel.app/
+
 This project implements a **Client List Table UI** with multi-sort capabilities and drag-and-drop sorting priority, built as part of a Full Stack Web Developer assignment for CREATEXP.
 
 ### ✨ Key Features
